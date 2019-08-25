@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-from configparser import ConfigParser
+import configparser
+from functools import reduce
+import io
 import itertools
 import os
 from pathlib import Path
@@ -9,17 +11,38 @@ from string import Template
 
 import models
 
-ROOT_PATH = Path(__file__).parent.resolve()
-TEMPLATES_PATH = ROOT_PATH.joinpath('templates')
+from jsmin import jsmin
+from cssmin import cssmin
 
-config = ConfigParser()
+ROOT_PATH = Path(__file__).parent.resolve()
+STATIC_PATH = ROOT_PATH.joinpath('static')
+TEMPLATES_PATH = ROOT_PATH.joinpath('templates')
+JS_LIBS = ['jquery', 'popper', 'bootstrap', 'unitegallery', 'ug-theme-tiles']
+CSS_LIBS = ['bootstrap', 'style', 'unite-gallery']
+
+config = configparser.ConfigParser()
 config.read(Path(__file__).parent.joinpath('config.ini').resolve())
 section = os.environ.get('CONFIG', 'DEFAULT')
 cnf = config[section]
 
 dist_path = Path(cnf.get('dist_dir')).expanduser().resolve()
 shutil.rmtree(dist_path, ignore_errors=True)
-shutil.copytree(src=ROOT_PATH.joinpath('static'), dst=dist_path)
+shutil.copytree(src=ROOT_PATH.joinpath('static', 'img'),
+                dst=dist_path.joinpath('img'))
+
+# Asset concatenation and minification
+js_libs = [STATIC_PATH.joinpath('js', f'{js_lib}.js') for js_lib in JS_LIBS]
+js_buf = io.StringIO()
+reduce(lambda buf, path: buf.write(path.read_text()) and buf, js_libs, js_buf)
+js_dist_path = dist_path.joinpath('js')
+js_dist_path.mkdir()
+js_dist_path.joinpath('js_all.js').write_text(jsmin(js_buf.getvalue()))
+css_libs = [STATIC_PATH.joinpath('css', f'{css_lib}.css') for css_lib in CSS_LIBS]
+css_buf = io.StringIO()
+reduce(lambda buf, path: buf.write(path.read_text()) and buf, css_libs, css_buf)
+css_dist_path = dist_path.joinpath('css')
+css_dist_path.mkdir()
+css_dist_path.joinpath('css_all.css').write_text(cssmin(css_buf.getvalue()))
 
 pics_dir = cnf.get('pics_dir')
 photo_exts = cnf.get('photo_exts').split(',')
