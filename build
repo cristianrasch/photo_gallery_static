@@ -9,9 +9,7 @@ from string import Template
 
 import models
 
-DIST_DIR = 'dist'
 ROOT_PATH = Path(__file__).parent.resolve()
-DIST_PATH = ROOT_PATH.joinpath(DIST_DIR)
 TEMPLATES_PATH = ROOT_PATH.joinpath('templates')
 
 config = ConfigParser()
@@ -19,8 +17,9 @@ config.read(Path(__file__).parent.joinpath('config.ini').resolve())
 section = os.environ.get('CONFIG', 'DEFAULT')
 cnf = config[section]
 
-shutil.rmtree(DIST_PATH, ignore_errors=True)
-shutil.copytree(src=ROOT_PATH.joinpath('static'), dst=DIST_PATH)
+dist_path = Path(cnf.get('dist_dir')).expanduser().resolve()
+shutil.rmtree(dist_path, ignore_errors=True)
+shutil.copytree(src=ROOT_PATH.joinpath('static'), dst=dist_path)
 
 pics_dir = cnf.get('pics_dir')
 photo_exts = cnf.get('photo_exts').split(',')
@@ -44,7 +43,7 @@ index = Template(index_tpl).substitute(CONTENT=''.join(idx_content))
 
 layout_tpl = TEMPLATES_PATH.joinpath('layout.html').read_text()
 index_html = Template(layout_tpl).substitute(CONTENT=index)
-DIST_PATH.joinpath('index.html').write_text(index_html)
+dist_path.joinpath('index.html').write_text(index_html)
 
 
 # /FOLDER => show.html
@@ -65,9 +64,9 @@ for folder in folders:
     ]
     show = Template(show_tpl).substitute(CONTENT=''.join(show_content))
     show_html = Template(layout_tpl).substitute(CONTENT=show)
-    DIST_PATH.joinpath(f'{folder}.html').write_text(show_html)
+    dist_path.joinpath(f'{folder}.html').write_text(show_html)
 
 
 if cnf.getboolean('dev'):
     shutil.copytree(src=Path(pics_dir).expanduser().resolve(),
-                    dst=DIST_PATH.joinpath('pictures'))
+                    dst=dist_path.joinpath('pictures'))
