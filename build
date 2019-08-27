@@ -44,7 +44,7 @@ css_dist_path = dist_path.joinpath('css')
 css_dist_path.mkdir()
 css_dist_path.joinpath('css_all.css').write_text(cssmin(css_buf.getvalue()))
 
-pics_dir = cnf.get('pics_dir')
+pics_dir = os.environ.get('PICS_DIR', cnf.get('pics_dir'))
 photo_exts = cnf.get('photo_exts').split(',')
 pic = models.Picture(pics_dir=pics_dir, photo_exts=photo_exts)
 folders = pic.folders()
