@@ -19,6 +19,21 @@
 </div>
 
 <script type="text/javascript">
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
+                  'July', 'August', 'September', 'October', 'November',
+                  'December'];
+  const MONTHS_RE = new RegExp('(?:'+MONTHS.join('|')+')_(\\d{4})\\.');
+
+  document.querySelectorAll('a[href="/"]').forEach(a =>
+    a.addEventListener('click', e => {
+      const match = MONTHS_RE.exec(location.pathname);
+
+      if (match) {
+        e.preventDefault();
+        location.assign('/#'+match[1]);
+      }
+    }));
+
   document.addEventListener('DOMContentLoaded', function(){
     $$("#gallery").unitegallery();
   });

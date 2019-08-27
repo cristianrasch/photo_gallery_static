@@ -16,6 +16,7 @@ from cssmin import cssmin
 
 ROOT_PATH = Path(__file__).parent.resolve()
 STATIC_PATH = ROOT_PATH.joinpath('static')
+JS_PATH = STATIC_PATH.joinpath('js')
 TEMPLATES_PATH = ROOT_PATH.joinpath('templates')
 JS_LIBS = ['jquery', 'popper', 'bootstrap', 'unitegallery', 'ug-theme-tiles']
 CSS_LIBS = ['bootstrap', 'style', 'unite-gallery']
@@ -31,7 +32,7 @@ shutil.copytree(src=ROOT_PATH.joinpath('static', 'img'),
                 dst=dist_path.joinpath('img'))
 
 # Asset concatenation and minification
-js_libs = [STATIC_PATH.joinpath('js', f'{js_lib}.js') for js_lib in JS_LIBS]
+js_libs = [JS_PATH.joinpath(f'{js_lib}.js') for js_lib in JS_LIBS]
 js_buf = io.StringIO()
 reduce(lambda buf, path: buf.write(path.read_text()) and buf, js_libs, js_buf)
 js_dist_path = dist_path.joinpath('js')
@@ -64,8 +65,18 @@ for (folder, css_class) in zip(folders, css_classes)
 index_tpl = TEMPLATES_PATH.joinpath('index.html').read_text()
 index = Template(index_tpl).substitute(CONTENT=''.join(idx_content))
 
+if cnf.getboolean('group_months_by_year'):
+    group_months_by_year_js = JS_PATH.joinpath('group_months_by_year.js').read_text()
+    js_tag = f"""
+<script type="text/javascript">
+    {group_months_by_year_js}
+</script>
+    """
+else:
+    js_tag = ''
+
 layout_tpl = TEMPLATES_PATH.joinpath('layout.html').read_text()
-index_html = Template(layout_tpl).substitute(CONTENT=index)
+index_html = Template(layout_tpl).substitute(CONTENT=(index + js_tag))
 dist_path.joinpath('index.html').write_text(index_html)
 
 
