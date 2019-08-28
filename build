@@ -76,7 +76,9 @@ else:
     js_tag = ''
 
 layout_tpl = TEMPLATES_PATH.joinpath('layout.html').read_text()
-index_html = Template(layout_tpl).substitute(CONTENT=(index + js_tag))
+title_prefix = cnf.get('title_prefix')
+index_html = Template(layout_tpl).substitute(TITLE_PREFIX=title_prefix,
+                                             CONTENT=(index + js_tag))
 dist_path.joinpath('index.html').write_text(index_html)
 
 
@@ -97,7 +99,8 @@ for folder in folders:
     for picture in pictures
     ]
     show = Template(show_tpl).substitute(CONTENT=''.join(show_content))
-    show_html = Template(layout_tpl).substitute(CONTENT=show)
+    show_html = Template(layout_tpl).substitute(TITLE_PREFIX=title_prefix,
+                                                CONTENT=show)
     dist_path.joinpath(f'{folder}.html').write_text(show_html)
 
 
