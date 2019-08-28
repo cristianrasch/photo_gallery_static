@@ -11,6 +11,7 @@ function getYear() {
 function getDates() {
   return Array.from(document.querySelectorAll('a.list-group-item.list-group-item-action'))
               .map(a => /[A-Z][^.]+/.exec(a.getAttribute('href'))[0])
+              .filter(dtStr => MONTHS_RE.test(dtStr))
               .map((dtStr) => {
                 const [month, yr] = dtStr.split('_');
                 return new Date(Number(yr), MONTHS.indexOf(month));
@@ -22,6 +23,7 @@ const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
                 'December'];
 const CSS_CLASSES = ['primary', 'secondary', 'success', 'danger', 'warning',
                      'info', 'light', 'dark'];
+const MONTHS_RE = new RegExp(`^(?:${MONTHS.join('|')})_(\\d{4})$`);
 
 function setYear(year) {
   updateMonthList(year);
