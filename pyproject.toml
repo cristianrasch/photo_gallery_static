@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "photo_gallery_static"
+version = "0.1.0"
+description = "Photo gallery, the static version"
+authors = ["Cristian Rasch <cristianrasch@fastmail.fm>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+cssmin = "^0.2.0"
+jsmin = "^2.2.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
