@@ -1,2 +1,2 @@
 cssmin==0.2.0
-jsmin==2.2.2
+jsmin==3.0.1
