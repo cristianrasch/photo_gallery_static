@@ -111,4 +111,4 @@ if symlink_target := cnf.get('pics_symlink_target'):
     if cnf.getboolean('dev'):
         shutil.copytree(src=pics_path, dst=dest_path)
     else:
-        pics_path.symlink_to(dest_path)
+        dest_path.symlink_to(pics_path)
