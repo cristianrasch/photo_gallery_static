@@ -104,6 +104,11 @@ for folder in folders:
     dist_path.joinpath(f'{folder}.html').write_text(show_html)
 
 
-if cnf.getboolean('dev'):
-    shutil.copytree(src=Path(pics_dir).expanduser().resolve(),
-                    dst=dist_path.joinpath('pictures'))
+pics_path = Path(pics_dir).expanduser().resolve()
+if symlink_target := cnf.get('pics_symlink_target'):
+    dest_path = dist_path / symlink_target
+
+    if cnf.getboolean('dev'):
+        shutil.copytree(src=pics_path, dst=dest_path)
+    else:
+        pics_path.symlink_to(dest_path)
