@@ -18,7 +18,7 @@ ROOT_PATH = Path(__file__).parent.resolve()
 STATIC_PATH = ROOT_PATH.joinpath('static')
 JS_PATH = STATIC_PATH.joinpath('js')
 TEMPLATES_PATH = ROOT_PATH.joinpath('templates')
-JS_LIBS = ['jquery', 'popper', 'bootstrap', 'unitegallery', 'ug-theme-tiles']
+JS_LIBS = ['jquery', 'bootstrap.bundle', 'unitegallery', 'ug-theme-tiles']
 CSS_LIBS = ['bootstrap', 'style', 'unite-gallery']
 
 config = configparser.ConfigParser()
